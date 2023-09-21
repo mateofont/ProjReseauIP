@@ -4,6 +4,18 @@ import ipaddress
 import sqlite3
 import hashlib
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#                                                                !
+#           AJOUTER CHECKBOX A LA PREMIERE FONCTIONNALITE        !
+#           SI SOUS RESEAU ---> ENTRY POUR MASQUE DE SOUS RES    !
+#           ET DONC AFFICHER ADRESSE DE SOUS RES                 !
+#                                                                !
+#           AJUSTER ESPACE ENTRE BOUTONS / EMBELLIR GUI          !
+#                                                                !
+#           AJOUTER BOUTON QUITTER SUR TOUTES LES PAGES          !
+#                                                                !
+#!!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 # Initialisation de la base de données SQLite3 pour stocker les mots de passe
 conn = sqlite3.connect("passwords.db")
 cursor = conn.cursor()
