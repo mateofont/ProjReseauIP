@@ -69,6 +69,19 @@ def calculate_subnet_info(start_ip, mask, num_subnets, hosts_per_subnet):
     
     return subnet_info
 
+#Fonction appelée lorsque le bouton "Inscription" est cliqué
+def afficher_signin():
+    login_frame.grid_forget()
+    signin_frame.grid(row=0, column=0, padx=20, pady=20)
+
+def signin():
+    new_username = new_username_entry.get()
+    new_password = new_password_entry.get()
+    add_user(new_username, new_password)
+    #login_frame.grid_forget()
+    signin_frame.grid_forget()  # Masquer le cadre d'inscription
+    main_frame.grid(row=0, column=0, padx=20, pady=20)
+
 # Fonction appelée lorsque le bouton "Connexion" est cliqué
 def login():
     username = username_entry.get()
@@ -81,9 +94,23 @@ def login():
     else:
         messagebox.showerror("Erreur", "Nom d'utilisateur ou mot de passe incorrect")
 
+
 # Création de la fenêtre principale
 root = tk.Tk()
 root.title("Gestion d'adresses IP et sous-réseaux")
+
+#Frame d'Inscription !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+signin_frame = tk.Frame(root)
+tk.Label(signin_frame, text="Nom d'utilisateur:").grid(row=0, column=0)
+new_username_entry = tk.Entry(signin_frame)
+new_username_entry.grid(row=0, column=1)
+
+tk.Label(signin_frame, text="Mot de passe:").grid(row=1, column=0)
+new_password_entry = tk.Entry(signin_frame, show="*")
+new_password_entry.grid(row=1, column=1)
+
+inscription_button = tk.Button(signin_frame, text="S'inscrire", command=signin)
+inscription_button.grid(row=2, columnspan=1)
 
 # Frame de connexion
 login_frame = tk.Frame(root)
@@ -98,7 +125,11 @@ password_entry = tk.Entry(login_frame, show="*")
 password_entry.grid(row=1, column=1)
 
 login_button = tk.Button(login_frame, text="Connexion", command=login)
-login_button.grid(row=2, columnspan=2)
+login_button.grid(row=2, columnspan=1)
+
+#bouton pour ajouter un utilisateur
+signin_button = tk.Button(login_frame, text="Inscription", command= afficher_signin )
+signin_button.grid(row=3, columnspan=1)
 
 # Frame principal pour les fonctionnalités
 main_frame = tk.Frame(root)
