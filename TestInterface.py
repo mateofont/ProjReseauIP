@@ -131,30 +131,37 @@ login_button.grid(row=2, columnspan=1)
 signin_button = tk.Button(login_frame, text="Inscription", command= afficher_signin )
 signin_button.grid(row=3, columnspan=1)
 
-# Frame principal pour les fonctionnalités
+# Frame principal pour les fonctionnalités (3 boutons)
 main_frame = tk.Frame(root)
+
+#Frame pour calculer adresse de reseau et broadcast
+resbroadcast_frame = tk.Frame(root)
+#Frame pour verifier adresse appartient au réseau
+appartientres_frame = tk.Frame(root)
+# Frame pour info sur les sous rés 
+infosousres_frame = tk.Frame(root)
 
 # Fonctions pour afficher les différentes fonctionnalités
 def display_network_broadcast():
-    main_text.delete(1.0, tk.END)
+    resbc_text.delete(1.0, tk.END)
     ip = ip_entry.get()
     mask = int(mask_entry.get())
     network, broadcast = calculate_network_and_broadcast(ip, mask)
-    main_text.insert(tk.END, f"Adresse de réseau: {network}\n")
-    main_text.insert(tk.END, f"Adresse de broadcast: {broadcast}\n")
+    resbc_text.insert(tk.END, f"Adresse de réseau: {network}\n")
+    resbc_text.insert(tk.END, f"Adresse de broadcast: {broadcast}\n")
 
 def display_check_ip_in_network():
-    main_text.delete(1.0, tk.END)
+    checkres_text.delete(1.0, tk.END)
     ip = ip_to_check_entry.get()
     network = network_entry.get()
     mask = int(mask_to_check_entry.get())
     if check_ip_in_network(ip, network, mask):
-        main_text.insert(tk.END, f"{ip} appartient au réseau {network}/{mask}\n")
+        checkres_text.insert(tk.END, f"{ip} appartient au réseau {network}/{mask}\n")
     else:
-        main_text.insert(tk.END, f"{ip} n'appartient pas au réseau {network}/{mask}\n")
+        checkres_text.insert(tk.END, f"{ip} n'appartient pas au réseau {network}/{mask}\n")
 
 def display_subnet_info():
-    main_text.delete(1.0, tk.END)
+    infosousres_text.delete(1.0, tk.END)
     start_ip = start_ip_entry.get()
     mask = int(subnet_mask_entry.get())
     num_subnets = int(num_subnets_entry.get())
@@ -162,58 +169,119 @@ def display_subnet_info():
     subnet_info = calculate_subnet_info(start_ip, mask, num_subnets, hosts_per_subnet)
     
     for i, subnet in enumerate(subnet_info, 1):
-        main_text.insert(tk.END, f"Sous-réseau {i}:\n")
-        main_text.insert(tk.END, f"Adresse de réseau: {subnet['network']}\n")
-        main_text.insert(tk.END, f"Adresse de broadcast: {subnet['broadcast']}\n")
-        main_text.insert(tk.END, f"Nombre d'IP utilisables: {subnet['usable_ips']}\n\n")
+        infosousres_text.insert(tk.END, f"Sous-réseau {i}:\n")
+        infosousres_text.insert(tk.END, f"Adresse de réseau: {subnet['network']}\n")
+        infosousres_text.insert(tk.END, f"Adresse de broadcast: {subnet['broadcast']}\n")
+        infosousres_text.insert(tk.END, f"Nombre d'IP utilisables: {subnet['usable_ips']}\n\n")
 
 # Widgets pour les fonctionnalités
-ip_entry = tk.Entry(main_frame)
-mask_entry = tk.Entry(main_frame)
-network_entry = tk.Entry(main_frame)
-ip_to_check_entry = tk.Entry(main_frame)
-mask_to_check_entry = tk.Entry(main_frame)
-start_ip_entry = tk.Entry(main_frame)
-subnet_mask_entry = tk.Entry(main_frame)
-num_subnets_entry = tk.Entry(main_frame)
-hosts_per_subnet_entry = tk.Entry(main_frame)
-main_text = tk.Text(main_frame, height=10, width=40)
-
+ip_entry = tk.Entry(resbroadcast_frame)
+mask_entry = tk.Entry(resbroadcast_frame)
+network_entry = tk.Entry(appartientres_frame)
+ip_to_check_entry = tk.Entry(appartientres_frame)
+mask_to_check_entry = tk.Entry(appartientres_frame)
+start_ip_entry = tk.Entry(infosousres_frame)
+subnet_mask_entry = tk.Entry(infosousres_frame)
+num_subnets_entry = tk.Entry(infosousres_frame)
+hosts_per_subnet_entry = tk.Entry(infosousres_frame)
+#main_text = tk.Text(main_frame, height=10, width=40)
+resbc_text= tk.Text(resbroadcast_frame, height=5, width=40)
+checkres_text = tk.Text(appartientres_frame , height=5, width=40)
+infosousres_text = tk.Text(infosousres_frame , height=5, width=40)
 # Boutons pour les fonctionnalités
-network_broadcast_button = tk.Button(main_frame, text="Calculer Réseau/Broadcast", command=display_network_broadcast)
-check_ip_in_network_button = tk.Button(main_frame, text="Vérifier IP dans le réseau", command=display_check_ip_in_network)
-subnet_info_button = tk.Button(main_frame, text="Informations sur les sous-réseaux", command=display_subnet_info)
+network_broadcast_button = tk.Button(resbroadcast_frame, text="Calculer Réseau/Broadcast", command=display_network_broadcast)
+check_ip_in_network_button = tk.Button(appartientres_frame, text="Vérifier IP dans le réseau", command=display_check_ip_in_network)
+subnet_info_button = tk.Button(infosousres_frame, text="Informations sur les sous-réseaux", command=display_subnet_info)
 
-# Placement des widgets dans le Frame principal
-tk.Label(main_frame, text="Calculer Adresse de Réseau/Broadcast").grid(row=0, column=0, columnspan=2)
-tk.Label(main_frame, text="Adresse IP:").grid(row=1, column=0)
+
+#fonctions pour afficher les différents frame selon le button
+def afficher_resbc() : 
+    main_frame.grid_forget
+    resbroadcast_frame.grid(row=0, column=0, padx=20, pady=20)
+
+def afficher_checkres():
+    main_frame.grid_forget
+    appartientres_frame.grid(row=0, column=0, padx=20, pady=20)
+
+def afficher_infosousres():
+    main_frame.grid_forget
+    infosousres_frame.grid(row=0, column=0, padx=20, pady=20)
+
+
+#placement des boutons dans la frame principale pour chaque fonctionnalité
+resbc_button = tk.Button(main_frame, text = "Calculer Réseau/Broadcast", command=afficher_resbc)
+checkres_button = tk.Button(main_frame, text = "Vérifier IP dans le réseau", command= afficher_checkres)
+infosousres_button = tk.Button(main_frame, text = "Informations sur les sous-réseaux", command= afficher_infosousres)
+
+resbc_button.grid(row=4,columnspan=2)
+checkres_button.grid(row=6,columnspan=2)
+infosousres_button.grid(row=8,columnspan=2)
+
+# Widgets pour le calcul de l'adresse de réseau et du broadcast
+tk.Label(resbroadcast_frame, text="Calculer Adresse de Réseau/Broadcast").grid(row=0, column=0, columnspan=2)
+tk.Label(resbroadcast_frame, text="Adresse IP:").grid(row=1, column=0)
 ip_entry.grid(row=1, column=1)
-tk.Label(main_frame, text="Masque (en bits):").grid(row=2, column=0)
+tk.Label(resbroadcast_frame, text="Masque (en bits):").grid(row=2, column=0)
 mask_entry.grid(row=2, column=1)
 network_broadcast_button.grid(row=3, columnspan=2)
+resbc_text.grid(row=16, column=0, columnspan=2)
 
-tk.Label(main_frame, text="Vérifier si IP appartient au réseau").grid(row=4, column=0, columnspan=2)
-tk.Label(main_frame, text="Adresse IP à vérifier:").grid(row=5, column=0)
-ip_to_check_entry.grid(row=5, column=1)
-tk.Label(main_frame, text="Adresse du réseau:").grid(row=6, column=0)
-network_entry.grid(row=6, column=1)
-tk.Label(main_frame, text="Masque (en bits):").grid(row=7, column=0)
-mask_to_check_entry.grid(row=7, column=1)
-check_ip_in_network_button.grid(row=8, columnspan=2)
 
-tk.Label(main_frame, text="Informations sur les sous-réseaux").grid(row=9, column=0, columnspan=2)
-tk.Label(main_frame, text="Adresse IP de départ:").grid(row=10, column=0)
-start_ip_entry.grid(row=10, column=1)
-tk.Label(main_frame, text="Masque du sous-réseau (en bits):").grid(row=11, column=0)
-subnet_mask_entry.grid(row=11, column=1)
-tk.Label(main_frame, text="Nombre de sous-réseaux:").grid(row=12, column=0)
-num_subnets_entry.grid(row=12, column=1)
-tk.Label(main_frame, text="Hôtes par sous-réseau:").grid(row=13, column=0)
-hosts_per_subnet_entry.grid(row=13, column=1)
-subnet_info_button.grid(row=14, columnspan=2)
+# Widgets pour vérifier si une adresse IP appartient à un réseau
+tk.Label(appartientres_frame, text="Vérifier si IP appartient au réseau").grid(row=0, column=0, columnspan=2)
+tk.Label(appartientres_frame, text="Adresse IP à vérifier:").grid(row=1, column=0)
+ip_to_check_entry.grid(row=1, column=1)
+tk.Label(appartientres_frame, text="Adresse du réseau:").grid(row=2, column=0)
+network_entry.grid(row=2, column=1)
+tk.Label(appartientres_frame, text="Masque (en bits):").grid(row=3, column=0)
+mask_to_check_entry.grid(row=3, column=1)
+check_ip_in_network_button.grid(row=4, columnspan=2)
+checkres_text.grid(row=16, column=0, columnspan=2)
 
-tk.Label(main_frame, text="Résultat:").grid(row=15, column=0, columnspan=2)
-main_text.grid(row=16, column=0, columnspan=2)
+# Widgets pour obtenir des informations sur les sous-réseaux
+tk.Label(infosousres_frame, text="Informations sur les sous-réseaux").grid(row=0, column=0, columnspan=2)
+tk.Label(infosousres_frame, text="Adresse IP de départ:").grid(row=1, column=0)
+start_ip_entry.grid(row=1, column=1)
+tk.Label(infosousres_frame, text="Masque du sous-réseau (en bits):").grid(row=2, column=0)
+subnet_mask_entry.grid(row=2, column=1)
+tk.Label(infosousres_frame, text="Nombre de sous-réseaux:").grid(row=3, column=0)
+num_subnets_entry.grid(row=3, column=1)
+tk.Label(infosousres_frame, text="Hôtes par sous-réseau:").grid(row=4, column=0)
+hosts_per_subnet_entry.grid(row=4, column=1)
+subnet_info_button.grid(row=5, columnspan=2)
+infosousres_text.grid(row=16, column=0, columnspan=2)
+
+
+# Placement des widgets dans le Frame principal
+#tk.Label(main_frame, text="Calculer Adresse de Réseau/Broadcast").grid(row=0, column=0, columnspan=2)
+#tk.Label(main_frame, text="Adresse IP:").grid(row=1, column=0)
+#ip_entry.grid(row=1, column=1)
+#tk.Label(main_frame, text="Masque (en bits):").grid(row=2, column=0)
+#mask_entry.grid(row=2, column=1)
+#network_broadcast_button.grid(row=3, columnspan=2)
+
+#tk.Label(main_frame, text="Vérifier si IP appartient au réseau").grid(row=4, column=0, columnspan=2)
+#tk.Label(main_frame, text="Adresse IP à vérifier:").grid(row=5, column=0)
+#ip_to_check_entry.grid(row=5, column=1)
+#tk.Label(main_frame, text="Adresse du réseau:").grid(row=6, column=0)
+#network_entry.grid(row=6, column=1)
+#tk.Label(main_frame, text="Masque (en bits):").grid(row=7, column=0)
+#mask_to_check_entry.grid(row=7, column=1)
+#check_ip_in_network_button.grid(row=8, columnspan=2)
+
+#tk.Label(main_frame, text="Informations sur les sous-réseaux").grid(row=9, column=0, columnspan=2)
+#tk.Label(main_frame, text="Adresse IP de départ:").grid(row=10, column=0)
+#start_ip_entry.grid(row=10, column=1)
+#tk.Label(main_frame, text="Masque du sous-réseau (en bits):").grid(row=11, column=0)
+#subnet_mask_entry.grid(row=11, column=1)
+#tk.Label(main_frame, text="Nombre de sous-réseaux:").grid(row=12, column=0)
+#num_subnets_entry.grid(row=12, column=1)
+#tk.Label(main_frame, text="Hôtes par sous-réseau:").grid(row=13, column=0)
+#hosts_per_subnet_entry.grid(row=13, column=1)
+#subnet_info_button.grid(row=14, columnspan=2)
+
+#tk.Label(main_frame, text="Résultat:").grid(row=15, column=0, columnspan=2)
+#main_text.grid(row=16, column=0, columnspan=2)
 
 # Masquer le Frame principal au démarrage
 main_frame.grid_forget()
