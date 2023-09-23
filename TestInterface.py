@@ -51,9 +51,6 @@ def add_user(username, password):
     else:
         print(f"L'utilisateur '{username}' existe déjà dans la base de données.")
 
-# Exemple d'ajout d'un utilisateur seulement s'il n'existe pas déjà
-add_user("melih", "fontaine")
-
 # Fonction pour calculer l'adresse de réseau et de broadcast
 def calculate_network_and_broadcast(ip, mask):
     network = ipaddress.IPv4Network(f"{ip}/{mask}", strict=False)
@@ -106,6 +103,10 @@ def login():
     else:
         messagebox.showerror("Erreur", "Nom d'utilisateur ou mot de passe incorrect")
 
+# Fonction pour quitter l'application
+def quitter_application():
+    if messagebox.askokcancel("Quitter", "Voulez-vous vraiment quitter l'application?"):
+        root.destroy()
 
 # Création de la fenêtre principale
 root = tk.Tk()
@@ -137,11 +138,15 @@ password_entry = tk.Entry(login_frame, show="*")
 password_entry.grid(row=1, column=1)
 
 login_button = tk.Button(login_frame, text="Connexion", command=login)
-login_button.grid(row=2, columnspan=1)
+login_button.grid(row=2, column=0,columnspan=2)
+
+#bouton quitter l'application
+bouton_quitter = tk.Button(login_frame, text="Quitter", command=quitter_application)
+bouton_quitter.grid(row=10, column=0, columnspan=2)
 
 #bouton pour ajouter un utilisateur
 signin_button = tk.Button(login_frame, text="Inscription", command= afficher_signin )
-signin_button.grid(row=3, columnspan=1)
+signin_button.grid(row=3, columnspan=2)
 
 # Frame principal pour les fonctionnalités (3 boutons)
 main_frame = tk.Frame(root)
@@ -220,6 +225,31 @@ def afficher_infosousres():
     infosousres_frame.grid(row=0, column=0, padx=20, pady=20)
 
 
+#fonction déconnexion
+def deconnexion():
+    if messagebox.askokcancel("Déconnexion", "Voulez-vous vraiment vous déconnectez de l'application ?"):
+
+        login_frame.grid(row=0, column=0, padx=20, pady=20)
+        main_frame.grid_forget()
+        # Réinitialisez les champs de nom d'utilisateur et de mot de passe si nécessaire.
+        username_entry.delete(0, tk.END)
+        password_entry.delete(0, tk.END)
+
+#fonction retour calcul
+def retour_calcul():
+    resbroadcast_frame.grid_forget()
+    main_frame.grid(row=0, column=0, padx=20, pady=20)
+
+#fonction retour verif
+def retour_verif():
+    appartientres_frame.grid_forget()
+    main_frame.grid(row=0, column=0, padx=20, pady=20)
+
+#fonction retour info
+def retour_info():
+    infosousres_frame.grid_forget()
+    main_frame.grid(row=0, column=0, padx=20, pady=20)
+
 #placement des boutons dans la frame principale pour chaque fonctionnalité
 resbc_button = tk.Button(main_frame, text = "Calculer Réseau/Broadcast", command=afficher_resbc)
 checkres_button = tk.Button(main_frame, text = "Vérifier IP dans le réseau", command= afficher_checkres)
@@ -228,6 +258,22 @@ infosousres_button = tk.Button(main_frame, text = "Informations sur les sous-ré
 resbc_button.grid(row=4,columnspan=2)
 checkres_button.grid(row=6,columnspan=2)
 infosousres_button.grid(row=8,columnspan=2)
+
+#bouton Déconnexion
+deconnexion_button = tk.Button(main_frame, text="Déconnexion", command=deconnexion)
+deconnexion_button.grid(row=12, column=0, columnspan=2)
+
+#bouton retour calcul
+retourcalcul_bouton = tk.Button(resbroadcast_frame, text="Retour", command=retour_calcul)
+retourcalcul_bouton.grid(row=12, column=0, columnspan=2)
+
+#bouton retour verif
+retourverif_bouton = tk.Button(appartientres_frame, text="Retour", command=retour_verif)
+retourverif_bouton.grid(row=12, column=0, columnspan=2)
+
+#bouton retour info
+retourinfo_bouton = tk.Button(infosousres_frame, text="Retour", command=retour_info)
+retourinfo_bouton.grid(row=12, column=0, columnspan=2)
 
 # Widgets pour le calcul de l'adresse de réseau et du broadcast
 tk.Label(resbroadcast_frame, text="Calculer Adresse de Réseau/Broadcast").grid(row=0, column=0, columnspan=2)
