@@ -12,7 +12,7 @@ import hashlib
 #                                                                !
 #           AJUSTER ESPACE ENTRE BOUTONS / EMBELLIR GUI          !
 #                                                                !
-#           AJOUTER BOUTON QUITTER SUR TOUTES LES PAGES          !
+#                                                                !
 #                                                                !
 #!!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
