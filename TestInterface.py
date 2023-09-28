@@ -6,9 +6,9 @@ import hashlib
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #                                                                !                                                    !
-#           TESTER AVEC IP RESERVEES                                                     !
+#           TESTER AVEC IP RESERVEES                             !                        !
 #           AJUSTER ESPACE ENTRE BOUTONS / EMBELLIR GUI          !
-
+#                                                                !
 #!!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Initialisation de la base de données SQLite3 pour stocker les mots de passe
