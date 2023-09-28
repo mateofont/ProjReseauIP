@@ -5,15 +5,10 @@ import sqlite3
 import hashlib
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#                                                                !
-#           AJOUTER CHECKBOX A LA PREMIERE FONCTIONNALITE        !
-#           SI SOUS RESEAU ---> ENTRY POUR MASQUE DE SOUS RES    !
-#           ET DONC AFFICHER ADRESSE DE SOUS RES                 !
-#                                                                !
+#                                                                !                                                    !
+#           TESTER AVEC IP RESERVEES                                                     !
 #           AJUSTER ESPACE ENTRE BOUTONS / EMBELLIR GUI          !
-#                                                                !
-#                                                                !
-#                                                                !
+
 #!!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # Initialisation de la base de données SQLite3 pour stocker les mots de passe
@@ -52,9 +47,23 @@ def add_user(username, password):
         print(f"L'utilisateur '{username}' existe déjà dans la base de données.")
 
 # Fonction pour calculer l'adresse de réseau et de broadcast
-def calculate_network_and_broadcast(ip, mask):
-    network = ipaddress.IPv4Network(f"{ip}/{mask}", strict=False)
+def calculate_network_and_broadcast(ip, mask, is_subnet):
+    if is_subnet:
+        subnet_mask = int(sousres_mask_entry.get())
+    else:
+        subnet_mask = mask
+
+    network = ipaddress.IPv4Network(f"{ip}/{subnet_mask}", strict=False)
     return network.network_address, network.broadcast_address
+
+# Fonction appelée lorsque la checkbox est coché ou décoché
+def on_checkbox_change():
+    if subnet_checkbox_var.get():
+        sousres_mask_entry.grid(row=4, column=1)
+        subnet_mask_label.grid(row=4, column=0)
+    else:
+        sousres_mask_entry.grid_forget()
+        subnet_mask_label.grid_forget()
 
 # Fonction pour vérifier si une adresse IP appartient à un réseau
 def check_ip_in_network(ip, network, mask):
@@ -96,7 +105,7 @@ def login():
     username = username_entry.get()
     password = password_entry.get()
 
-    if check_password(username, password):
+    if (check_password(username, password) and username!="" and password!=""):
         # Si le mot de passe est correct, activer les fonctionnalités
         login_frame.grid_forget()
         main_frame.grid(row=0, column=0, padx=20, pady=20)
@@ -163,7 +172,8 @@ def display_network_broadcast():
     resbc_text.delete(1.0, tk.END)
     ip = ip_entry.get()
     mask = int(mask_entry.get())
-    network, broadcast = calculate_network_and_broadcast(ip, mask)
+    issubnet = subnet_checkbox_var.get()
+    network, broadcast = calculate_network_and_broadcast(ip, mask, issubnet)
     resbc_text.insert(tk.END, f"Adresse de réseau: {network}\n")
     resbc_text.insert(tk.END, f"Adresse de broadcast: {broadcast}\n")
 
@@ -281,7 +291,16 @@ tk.Label(resbroadcast_frame, text="Adresse IP:").grid(row=1, column=0)
 ip_entry.grid(row=1, column=1)
 tk.Label(resbroadcast_frame, text="Masque (en bits):").grid(row=2, column=0)
 mask_entry.grid(row=2, column=1)
-network_broadcast_button.grid(row=3, columnspan=2)
+
+# Ajouter la checkbox et l'entry pour le masque de sous-réseau
+subnet_checkbox_var = tk.BooleanVar()
+subnet_checkbox = tk.Checkbutton(resbroadcast_frame, text="Sous-réseau", variable=subnet_checkbox_var, command=on_checkbox_change)
+subnet_checkbox.grid(row=3, column=0, columnspan=2)
+
+subnet_mask_label = tk.Label(resbroadcast_frame, text="Masque du sous-réseau (en bits):")
+sousres_mask_entry = tk.Entry(resbroadcast_frame)
+
+network_broadcast_button.grid(row=5, columnspan=2)
 resbc_text.grid(row=16, column=0, columnspan=2)
 
 
@@ -293,7 +312,7 @@ tk.Label(appartientres_frame, text="Adresse du réseau:").grid(row=2, column=0)
 network_entry.grid(row=2, column=1)
 tk.Label(appartientres_frame, text="Masque (en bits):").grid(row=3, column=0)
 mask_to_check_entry.grid(row=3, column=1)
-check_ip_in_network_button.grid(row=4, columnspan=2)
+check_ip_in_network_button.grid(row=7, columnspan=2)
 checkres_text.grid(row=16, column=0, columnspan=2)
 
 # Widgets pour obtenir des informations sur les sous-réseaux
