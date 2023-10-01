@@ -3,6 +3,10 @@ from tkinter import messagebox
 import ipaddress
 import sqlite3
 import hashlib
+from PIL import Image, ImageTk
+
+#J'ai ajouté un bouton retour dans inscription, y'avaiy un buug dans inscription quand tu cliquais sur s'inscrire alors quil n'y vait rien
+#dans utilisateur ou mdp ça te connectais, mtn il y a une errorbox 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!! TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #                                                                !                                                    !
@@ -95,10 +99,19 @@ def afficher_signin():
 def signin():
     new_username = new_username_entry.get()
     new_password = new_password_entry.get()
-    add_user(new_username, new_password)
+    if not new_username or not new_password:
+        messagebox.showerror("Erreur", "Veuillez saisir un nom d'utilisateur et un mot de passe.")
+        return
+    if user_exists(new_username):
+        messagebox.showerror("Erreur", "Cet utilisateur existe déjà.")
+        return
+    else:
+        # Ajouter l'utilisateur à la base de données
+        add_user(new_username, new_password)
+
     #login_frame.grid_forget()
     signin_frame.grid_forget()  # Masquer le cadre d'inscription
-    main_frame.grid(row=0, column=0, padx=20, pady=20)
+    login_frame.grid(row=0, column=0, padx=20, pady=20)
 
 # Fonction appelée lorsque le bouton "Connexion" est cliqué
 def login():
@@ -117,9 +130,11 @@ def quitter_application():
     if messagebox.askokcancel("Quitter", "Voulez-vous vraiment quitter l'application?"):
         root.destroy()
 
+
 # Création de la fenêtre principale
 root = tk.Tk()
 root.title("Gestion d'adresses IP et sous-réseaux")
+root.geometry("700x400")
 
 #Frame d'Inscription !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 signin_frame = tk.Frame(root)
@@ -245,6 +260,13 @@ def deconnexion():
         username_entry.delete(0, tk.END)
         password_entry.delete(0, tk.END)
 
+#fonction retour inscription
+def retour_inscription():
+    new_username_entry.delete(0, tk.END)  # Efface le texte dans new_username_entry
+    new_password_entry.delete(0, tk.END)
+    signin_frame.grid_forget()
+    login_frame.grid(row=0, column=0, padx=20, pady=20)
+
 #fonction retour calcul
 def retour_calcul():
     resbroadcast_frame.grid_forget()
@@ -272,6 +294,10 @@ infosousres_button.grid(row=8,columnspan=2)
 #bouton Déconnexion
 deconnexion_button = tk.Button(main_frame, text="Déconnexion", command=deconnexion)
 deconnexion_button.grid(row=12, column=0, columnspan=2)
+
+#bouton retour inscription
+retourinscription_bouton = tk.Button(signin_frame, text="Retour", command=retour_inscription)
+retourinscription_bouton.grid(row=12, column=0, columnspan=2)
 
 #bouton retour calcul
 retourcalcul_bouton = tk.Button(resbroadcast_frame, text="Retour", command=retour_calcul)
@@ -328,37 +354,6 @@ hosts_per_subnet_entry.grid(row=4, column=1)
 subnet_info_button.grid(row=5, columnspan=2)
 infosousres_text.grid(row=16, column=0, columnspan=2)
 
-
-# Placement des widgets dans le Frame principal
-#tk.Label(main_frame, text="Calculer Adresse de Réseau/Broadcast").grid(row=0, column=0, columnspan=2)
-#tk.Label(main_frame, text="Adresse IP:").grid(row=1, column=0)
-#ip_entry.grid(row=1, column=1)
-#tk.Label(main_frame, text="Masque (en bits):").grid(row=2, column=0)
-#mask_entry.grid(row=2, column=1)
-#network_broadcast_button.grid(row=3, columnspan=2)
-
-#tk.Label(main_frame, text="Vérifier si IP appartient au réseau").grid(row=4, column=0, columnspan=2)
-#tk.Label(main_frame, text="Adresse IP à vérifier:").grid(row=5, column=0)
-#ip_to_check_entry.grid(row=5, column=1)
-#tk.Label(main_frame, text="Adresse du réseau:").grid(row=6, column=0)
-#network_entry.grid(row=6, column=1)
-#tk.Label(main_frame, text="Masque (en bits):").grid(row=7, column=0)
-#mask_to_check_entry.grid(row=7, column=1)
-#check_ip_in_network_button.grid(row=8, columnspan=2)
-
-#tk.Label(main_frame, text="Informations sur les sous-réseaux").grid(row=9, column=0, columnspan=2)
-#tk.Label(main_frame, text="Adresse IP de départ:").grid(row=10, column=0)
-#start_ip_entry.grid(row=10, column=1)
-#tk.Label(main_frame, text="Masque du sous-réseau (en bits):").grid(row=11, column=0)
-#subnet_mask_entry.grid(row=11, column=1)
-#tk.Label(main_frame, text="Nombre de sous-réseaux:").grid(row=12, column=0)
-#num_subnets_entry.grid(row=12, column=1)
-#tk.Label(main_frame, text="Hôtes par sous-réseau:").grid(row=13, column=0)
-#hosts_per_subnet_entry.grid(row=13, column=1)
-#subnet_info_button.grid(row=14, columnspan=2)
-
-#tk.Label(main_frame, text="Résultat:").grid(row=15, column=0, columnspan=2)
-#main_text.grid(row=16, column=0, columnspan=2)
 
 # Masquer le Frame principal au démarrage
 main_frame.grid_forget()
