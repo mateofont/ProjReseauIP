@@ -4,6 +4,7 @@ import ipaddress
 import sqlite3
 import hashlib
 from PIL import Image, ImageTk
+import re
 
 #J'ai ajouté un bouton retour dans inscription, y'avaiy un buug dans inscription quand tu cliquais sur s'inscrire alors quil n'y vait rien
 #dans utilisateur ou mdp ça te connectais, mtn il y a une errorbox 
@@ -49,6 +50,16 @@ def add_user(username, password):
         conn.commit()
     else:
         print(f"L'utilisateur '{username}' existe déjà dans la base de données.")
+
+
+# Fonction pour valider une adresse IP
+def is_valid_ip(ip):
+    pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+    return bool(pattern.match(ip))
+
+# Fonction pour valider le masque en bits
+def is_valid_mask(mask):
+    return 1 <= int(mask) <= 32
 
 # Fonction pour calculer l'adresse de réseau et de broadcast
 def calculate_network_and_broadcast(ip, mask, is_subnet):
@@ -186,11 +197,19 @@ infosousres_frame = tk.Frame(root)
 def display_network_broadcast():
     resbc_text.delete(1.0, tk.END)
     ip = ip_entry.get()
-    mask = int(mask_entry.get())
+    mask = mask_entry.get()
     issubnet = subnet_checkbox_var.get()
-    network, broadcast = calculate_network_and_broadcast(ip, mask, issubnet)
-    resbc_text.insert(tk.END, f"Adresse de réseau: {network}\n")
-    resbc_text.insert(tk.END, f"Adresse de broadcast: {broadcast}\n")
+    if is_valid_ip(ip) and is_valid_mask(mask):
+        # Votre logique pour le calcul de l'adresse de réseau et du broadcast
+        mask=int(mask)
+        network, broadcast = calculate_network_and_broadcast(ip, mask, issubnet)
+        resbc_text.insert(tk.END, f"Adresse de réseau: {network}\n")
+        resbc_text.insert(tk.END, f"Adresse de broadcast: {broadcast}\n")
+    else:
+        resbc_text.insert(tk.END, "Adresse IP ou masque invalide\n")
+
+    
+   
 
 def display_check_ip_in_network():
     checkres_text.delete(1.0, tk.END)
