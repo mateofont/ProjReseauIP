@@ -215,26 +215,32 @@ def display_check_ip_in_network():
     checkres_text.delete(1.0, tk.END)
     ip = ip_to_check_entry.get()
     network = network_entry.get()
-    mask = int(mask_to_check_entry.get())
-    if check_ip_in_network(ip, network, mask):
-        checkres_text.insert(tk.END, f"{ip} appartient au réseau {network}/{mask}\n")
-    else:
-        checkres_text.insert(tk.END, f"{ip} n'appartient pas au réseau {network}/{mask}\n")
+    mask = mask_to_check_entry.get()
+    if(is_valid_ip(ip) and is_valid_ip(network) and is_valid_mask(mask)) :
+        mask=int(mask)
+        if check_ip_in_network(ip, network, mask):
+            checkres_text.insert(tk.END, f"{ip} appartient au réseau {network}/{mask}\n")
+        else:
+            checkres_text.insert(tk.END, f"{ip} n'appartient pas au réseau {network}/{mask}\n")
+    else : checkres_text.insert(tk.END, "adresse IP, réseau ou masque invalide\n")
 
 def display_subnet_info():
     infosousres_text.delete(1.0, tk.END)
     start_ip = start_ip_entry.get()
-    mask = int(subnet_mask_entry.get())
+    mask = subnet_mask_entry.get()
     num_subnets = int(num_subnets_entry.get())
     hosts_per_subnet = int(hosts_per_subnet_entry.get())
-    subnet_info = calculate_subnet_info(start_ip, mask, num_subnets, hosts_per_subnet)
-    
-    for i, subnet in enumerate(subnet_info, 1):
-        infosousres_text.insert(tk.END, f"Sous-réseau {i}:\n")
-        infosousres_text.insert(tk.END, f"Adresse de réseau: {subnet['network']}\n")
-        infosousres_text.insert(tk.END, f"Adresse de broadcast: {subnet['broadcast']}\n")
-        infosousres_text.insert(tk.END, f"Nombre d'IP utilisables: {subnet['usable_ips']}\n\n")
+    if(is_valid_ip(start_ip) and is_valid_mask(mask)):
+        mask=int(mask)
+        subnet_info = calculate_subnet_info(start_ip, mask, num_subnets, hosts_per_subnet)
 
+        for i, subnet in enumerate(subnet_info, 1):
+            infosousres_text.insert(tk.END, f"Sous-réseau {i}:\n")
+            infosousres_text.insert(tk.END, f"Adresse de réseau: {subnet['network']}\n")
+            infosousres_text.insert(tk.END, f"Adresse de broadcast: {subnet['broadcast']}\n")
+            infosousres_text.insert(tk.END, f"Nombre d'IP utilisables: {subnet['usable_ips']}\n\n")
+    else :
+        infosousres_text.insert(tk.END,("Adresse IP de départ ou masque invalide\n"))
 # Widgets pour les fonctionnalités
 ip_entry = tk.Entry(resbroadcast_frame)
 mask_entry = tk.Entry(resbroadcast_frame)
