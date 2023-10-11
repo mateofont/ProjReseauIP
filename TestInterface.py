@@ -55,12 +55,30 @@ def add_user(username, password):
 # Fonction pour valider une adresse IP
 def is_valid_ip(ip):
     pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
-    return bool(pattern.match(ip))
+    if (pattern.match(ip)):
+        return True
+    else:
+        messagebox.showerror("Adresse IP invalide", "L'adresse IP n'est pas valide.\nVeuillez entrer une adresse IP dans un format valide")
+        return False
 
 # Fonction pour valider le masque en bits
 def is_valid_mask(mask):
-    return 1 <= int(mask) <= 32
-
+    if mask.isdigit():
+        if 1 <= int(mask) <= 32:
+            return True
+        else:
+            messagebox.showerror("Masque invalide", "Le masque doit être un nombre entier entre 1 et 32.")
+            mask_entry.delete(0, tk.END)
+            mask_to_check_entry.delete(0, tk.END)
+            subnet_mask_entry.delete(0, tk.END)
+            return False
+    else:
+        messagebox.showerror("Erreur", "Le masque doit être un nombre entier entre 1 et 32.")
+        mask_entry.delete(0, tk.END)
+        mask_to_check_entry.delete(0, tk.END)
+        subnet_mask_entry.delete(0, tk.END)
+        return False
+    
 # Fonction pour calculer l'adresse de réseau et de broadcast
 def calculate_network_and_broadcast(ip, mask, is_subnet):
     if is_subnet:
@@ -145,7 +163,7 @@ def quitter_application():
 # Création de la fenêtre principale
 root = tk.Tk()
 root.title("Gestion d'adresses IP et sous-réseaux")
-root.geometry("700x400")
+root.geometry("400x300")
 
 #Frame d'Inscription !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 signin_frame = tk.Frame(root)
@@ -158,7 +176,7 @@ new_password_entry = tk.Entry(signin_frame, show="*")
 new_password_entry.grid(row=1, column=1)
 
 inscription_button = tk.Button(signin_frame, text="S'inscrire", command=signin)
-inscription_button.grid(row=2, columnspan=1)
+inscription_button.grid(row=2, columnspan=2)
 
 # Frame de connexion
 login_frame = tk.Frame(root)
@@ -200,7 +218,6 @@ def display_network_broadcast():
     mask = mask_entry.get()
     issubnet = subnet_checkbox_var.get()
     if is_valid_ip(ip) and is_valid_mask(mask):
-        # Votre logique pour le calcul de l'adresse de réseau et du broadcast
         mask=int(mask)
         network, broadcast = calculate_network_and_broadcast(ip, mask, issubnet)
         resbc_text.insert(tk.END, f"Adresse de réseau: {network}\n")
@@ -219,9 +236,9 @@ def display_check_ip_in_network():
     if(is_valid_ip(ip) and is_valid_ip(network) and is_valid_mask(mask)) :
         mask=int(mask)
         if check_ip_in_network(ip, network, mask):
-            checkres_text.insert(tk.END, f"{ip} appartient au réseau {network}/{mask}\n")
+            checkres_text.insert(tk.END, f"{ip} appartient au réseau\n{network}/{mask}\n")
         else:
-            checkres_text.insert(tk.END, f"{ip} n'appartient pas au réseau {network}/{mask}\n")
+            checkres_text.insert(tk.END, f"{ip} n'appartient pas au réseau\n{network}/{mask}\n")
     else : checkres_text.insert(tk.END, "adresse IP, réseau ou masque invalide\n")
 
 def display_subnet_info():
@@ -294,16 +311,29 @@ def retour_inscription():
 
 #fonction retour calcul
 def retour_calcul():
+    ip_entry.delete(0, tk.END)
+    mask_entry.delete(0, tk.END)
+    subnet_checkbox.deselect()
+    sousres_mask_entry.delete(0, tk.END)
+    subnet_mask_label.grid_forget()
+    sousres_mask_entry.grid_forget()
     resbroadcast_frame.grid_forget()
     main_frame.grid(row=0, column=0, padx=20, pady=20)
 
 #fonction retour verif
 def retour_verif():
+    network_entry.delete(0, tk.END)
+    ip_to_check_entry.delete(0, tk.END)
+    mask_to_check_entry.delete(0, tk.END)
     appartientres_frame.grid_forget()
     main_frame.grid(row=0, column=0, padx=20, pady=20)
 
 #fonction retour info
 def retour_info():
+    start_ip_entry.delete(0, tk.END)
+    subnet_mask_entry.delete(0, tk.END)
+    num_subnets_entry.delete(0, tk.END)
+    hosts_per_subnet_entry.delete(0, tk.END)
     infosousres_frame.grid_forget()
     main_frame.grid(row=0, column=0, padx=20, pady=20)
 
