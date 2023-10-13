@@ -155,6 +155,7 @@ def afficher_signin():
     login_frame.grid_forget()
     signin_frame.grid(row=0, column=0, padx=20, pady=20)
 
+#Fonction pour s'inscrire
 def signin():
     new_username = new_username_entry.get()
     new_password = new_password_entry.get()
