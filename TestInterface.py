@@ -51,15 +51,45 @@ def add_user(username, password):
     else:
         print(f"L'utilisateur '{username}' existe déjà dans la base de données.")
 
-
-# Fonction pour valider une adresse IP
 def is_valid_ip(ip):
     pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
-    if (pattern.match(ip)):
-        return True
+    if pattern.match(ip):
+        ip_parts = ip.split('.')
+        if all(0 <= int(part) <= 255 for part in ip_parts):
+            ip_res = ipaddress.IPv4Address(ip)
+            if not ip_res.is_reserved:
+                return True
+            else:
+                messagebox.showerror("Adresse IP invalide", "L'adresse IP est réservée.")
+                return False
+        else:
+            messagebox.showerror("Adresse IP invalide", "Les nombres dans l'adresse IP doivent être entre 0 et 255.")
+            return False
     else:
-        messagebox.showerror("Adresse IP invalide", "L'adresse IP n'est pas valide.\nVeuillez entrer une adresse IP dans un format valide")
+        messagebox.showerror("Adresse IP invalide", "L'adresse IP n'est pas valide.\nVeuillez entrer une adresse IP dans un format valide.")
         return False
+
+#def is_valid_ip(ip):
+   # pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+    #if pattern.match(ip):
+     #   ip_res = ipaddress.IPv4Address(ip)
+      #  if not ip_res.is_reserved:
+       #     return True
+        #else:
+         #   messagebox.showerror("Adresse IP invalide", "L'adresse IP est réservée.")
+          #  return False
+    #else:
+     #   messagebox.showerror("Adresse IP invalide", "L'adresse IP n'est pas valide.\nVeuillez entrer une adresse IP dans un format valide.")
+      #  return False
+    
+# Fonction pour valider une adresse IP
+#def is_valid_ip(ip):
+#    pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+ #   if (pattern.match(ip)):
+  #      return True
+   # else:
+    #    messagebox.showerror("Adresse IP invalide", "L'adresse IP n'est pas valide.\nVeuillez entrer une adresse IP dans un format valide")
+     #   return False
 
 # Fonction pour valider le masque en bits
 def is_valid_mask(mask):
