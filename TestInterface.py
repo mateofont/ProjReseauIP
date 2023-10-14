@@ -52,22 +52,47 @@ def add_user(username, password):
         print(f"L'utilisateur '{username}' existe déjà dans la base de données.")
 
 def is_valid_ip(ip):
+    ipreserve = [
+        ipaddress.ip_network('10.0.0.0/8'),  # Plage IP privée
+        ipaddress.ip_network('172.16.0.0/12'),  # Plage IP privée
+        ipaddress.ip_network('192.168.0.0/16'),  # Plage IP privée
+    ]
+    
     pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
     if pattern.match(ip):
         ip_parts = ip.split('.')
         if all(0 <= int(part) <= 255 for part in ip_parts):
             ip_res = ipaddress.IPv4Address(ip)
-            if not ip_res.is_reserved:
-                return True
+            if any(ip_res in reserved_range for reserved_range in ipreserve):
+                # Demander à l'utilisateur s'il souhaite continuer malgré l'adresse IP réservée
+                confirmation = messagebox.askokcancel("Adresse IP réservée", "L'adresse IP est réservée. Voulez-vous continuer?")
+                return confirmation
             else:
-                messagebox.showerror("Adresse IP invalide", "L'adresse IP est réservée.")
-                return False
+                return True
         else:
             messagebox.showerror("Adresse IP invalide", "Les nombres dans l'adresse IP doivent être entre 0 et 255.")
             return False
     else:
         messagebox.showerror("Adresse IP invalide", "L'adresse IP n'est pas valide.\nVeuillez entrer une adresse IP dans un format valide.")
         return False
+
+#def is_valid_ip(ip):
+#    pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+#    if pattern.match(ip):
+#        ip_parts = ip.split('.')
+#        if all(0 <= int(part) <= 255 for part in ip_parts):
+#            ip_res = ipaddress.IPv4Address(ip)
+#            if not ip_res.is_reserved:
+#                return True
+#            else:
+#                messagebox.showerror("Adresse IP invalide", "L'adresse IP est réservée.")
+#                return False
+#        else:
+#            messagebox.showerror("Adresse IP invalide", "Les nombres dans l'adresse IP doivent être entre 0 et 255.")
+#            return False
+#    else:
+#        messagebox.showerror("Adresse IP invalide", "L'adresse IP n'est pas valide.\nVeuillez entrer une adresse IP dans un format valide.")
+#       return False
 
 #def is_valid_ip(ip):
    # pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
@@ -81,15 +106,6 @@ def is_valid_ip(ip):
     #else:
      #   messagebox.showerror("Adresse IP invalide", "L'adresse IP n'est pas valide.\nVeuillez entrer une adresse IP dans un format valide.")
       #  return False
-    
-# Fonction pour valider une adresse IP
-#def is_valid_ip(ip):
-#    pattern = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
- #   if (pattern.match(ip)):
-  #      return True
-   # else:
-    #    messagebox.showerror("Adresse IP invalide", "L'adresse IP n'est pas valide.\nVeuillez entrer une adresse IP dans un format valide")
-     #   return False
 
 # Fonction pour valider le masque en bits
 def is_valid_mask(mask):
